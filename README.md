@@ -4,4 +4,12 @@ This reads from the resource and example directory and creates two files called 
 
 to run from command line:
 
-`>python3 daf-research.py`
+`>python3 definition-filemaker.py`
+
+
+Assumptions and Precondtions...
+
+Global variables that need to be set...
+
+screenhots..
+
