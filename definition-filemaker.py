@@ -10,12 +10,6 @@ logging.info('The logging module is working.')
 # create the ig.json file template as dictoinary
 
 
-'''
-ig_template = open(dir +'ig-template.json')  #ig-template  lack spreadsheet and valueset information
-igjson = ig_template.read() # convert to strings
-igpy =json.loads(igjson)  # convert to py dict format
-'''
-
 logging.info('create the ig.json file template as dictionary')
 
 # globals
