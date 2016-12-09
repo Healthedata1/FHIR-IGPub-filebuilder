@@ -124,18 +124,18 @@ def main():
             i]:  # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'SearchParameter', 'conformance')
 
-        # add spreadsheet extensions
-        for extension in extensions:
-            update_igjson('StructureDefinition', extension, 'base')
-            update_igjson('StructureDefinition', extension, 'defns')
-        # add spreadsheet operations
-        for operation in operations:
-           update_igjson('OperationDefinition', operation, 'base')
-           update_igjson('OperationDefinition', operation, 'defns')
-        # add spreadsheet search parameters
-        for search in searches:
-           update_igjson('SearchParameter', search, 'base')
-           update_igjson('SearchParameter', search, 'defns')
+   # add spreadsheet extensions
+    for extension in extensions:
+        update_igjson('StructureDefinition', extension, 'base')
+        update_igjson('StructureDefinition', extension, 'defns')
+    # add spreadsheet operations
+    for operation in operations:
+       update_igjson('OperationDefinition', operation, 'base')
+       update_igjson('OperationDefinition', operation, 'defns')
+    # add spreadsheet search parameters
+    for search in searches:
+       update_igjson('SearchParameter', search, 'base')
+       update_igjson('SearchParameter', search, 'defns')
 
     examples = os.listdir(
         dir + 'examples')  # get all the examples in the examples directory assuming are in json or xml
