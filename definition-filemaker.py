@@ -48,8 +48,8 @@ def update_sd(i,type):
     sdxml = etree.parse(sd_file)  # lxml module to parse excel xml
     sdid = sdxml.xpath('/ss:Workbook/ss:Worksheet[2]/ss:Table/ss:Row[11]/ss:Cell[2]/ss:Data',
                        namespaces=namespaces)  # use xpath to get the id from the spreadsheet and lower case
-    update_igjson(type, sdid[0].text) # add base to definitions file
-    update_igjson(type, sdid[0].text, 'defns') # add base to definitions file
+    update_igjson(type, sdid[0].text.lower()) # add base to definitions file
+    update_igjson(type, sdid[0].text.lower(), 'defns') # add base to definitions file
     return
 
 def update_igxml(type, purpose, id):
