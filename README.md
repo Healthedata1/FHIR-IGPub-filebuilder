@@ -4,12 +4,15 @@ This reads from the resource and example directory and definitions.csv file to c
 
 to run from command line:
 
-`>python3 definition-filemaker.py`
+`>python3.5 definition.py`
 
+todo: split out templates into separate module template.py
 
-Assumptions and Precondtions...
+Assumptions and Precondtions:
 
-Global variables that need to be set...
+Needs to be python 3.5 ( not sure about 3.6)
 
-screenhots..
+Global variables that need to be set...todo
+
+screenhots.. todo
 
