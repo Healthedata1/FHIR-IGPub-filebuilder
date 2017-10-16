@@ -1,0 +1,21 @@
+# assume menu links off for all conf resources and add as encounter each type in resource 
+
+D = {
+'StructureDefinition':'<!-- <li><a href="profiles.html">Profiles and Logical Models</a></li> -->',
+'StructureMap':'<!-- <li><a href="structuremaps.html">Mappings</a></li> -->',
+'Extension':'<!-- <li><a href="extensions.html">Extensions</a></li> -->',
+'ValueSet':'<!-- <li><a href="terminology.html">Terminology</a></li> -->',
+'CodeSystem':'<!-- <li><a href="terminology.html">Terminology</a></li> -->',
+'SearchParameter':'<!-- <li><a href="searchparams.html">Search Parameters</a></li> -->',
+'CapabilityStatement':'<!-- <li><a href="capstatements.html">Capability Statements</a></li> -->
+}
+# open navbar.html file
+# for each type of conformance resource present turn on the page
+k = StructureDefinition
+# log step
+Print(
+'{} is now {}'.format(D[k],D[k][5:-4] )
+)
+# do a string replace
+navbar_file.replace(D[k],D[k][5:-4])
+# save navbar file

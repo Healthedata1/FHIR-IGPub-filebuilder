@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.
+#! /usr/bin/env python3.5
 
 # create ig definition file with all value sets in the /resources directory
 import json, os, sys, logging, re, csv
@@ -78,7 +78,7 @@ igpy = {
   "spreadsheets": [],
   "tool": "jekyll",
   "version": "3.1.0",
-  "igpublisher-dir": None,
+  "igtemplate-dir": None,
   "title": "Implementation Guide Template",
   "status": "draft",
   "publisher": "Health eData Inc",
@@ -87,7 +87,8 @@ igpy = {
   "searches": [],
   "codesystems": [],
   "valuesets": [],
-  "structuremaps": []
+  "structuremaps": [],
+  "working-dir": None
 }
 
 logging.info('create the ig.xml file template as string')
@@ -265,7 +266,7 @@ def update_def(filename, type, purpose):
         vsmo = vsid_re.search(vsxml)  # get match object which contains id
         vsid = vsmo.group(1)  # get id as string
         try:
-            vsxml = vsxml.format(**igpy, id_value = vsid, res_type = type)  # add title, publisher etc to ig.xml and url to conformance resources xml file
+            vsxml = vsxml.format(id_value = vsid, res_type = type, **igpy)  # add title, publisher etc to ig.xml and url to conformance resources xml file
             logging.info('updating {} to insert variables for publisher and urls and status = {}'.format(filename, vsxml))
         except KeyError:
             pass
@@ -373,9 +374,8 @@ if __name__ == '__main__':
     ig_file = open(dir + 'resources/ig.xml', 'w')
     ig_file.write(igxml)  # replace ig.xml with this file
     logging.info('ig.xml now looks like : ' + igxml)
-
-    if igpy['igpublisher-dir']:
-        dir = igpy['igpublisher-dir']  # change to the ig publisher path name specified in the csv file if present
+    if igpy['igtemplate-dir']:
+        dir = igpy['igtemplate-dir']  # change to the ig template path name specified in the csv file if present to write to ig.json file in templates file
         logging.info('cwd = {}'.format(dir))
     ig_file = open(dir + 'ig.json', 'w')
     ig_file.write(json.dumps(igpy))  # convert dict to json and replace ig.json with this file
