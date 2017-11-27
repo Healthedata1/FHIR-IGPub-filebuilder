@@ -1,4 +1,4 @@
-# assume menu links off for all conf resources and add as encounter each type in resource 
+# assume menu links off for all conf resources and add as encounter each type in resource
 
 D = {
 'StructureDefinition':'<!-- <li><a href="profiles.html">Profiles and Logical Models</a></li> -->',
@@ -19,3 +19,5 @@ Print(
 # do a string replace
 navbar_file.replace(D[k],D[k][5:-4])
 # save navbar file
+
+or use a md file and liquid tags - easier
