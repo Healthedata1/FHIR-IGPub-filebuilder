@@ -11,16 +11,16 @@ igpy = {
           "template-format": "format.html"
       },
       "CapabilityStatement": {
-          "template-base": "capst.html"
+          "template-base": "conf.html"
       },
       "CodeSystem": {
-          "template-base": "codesys.html"
+          "template-base": "conf.html"
       },
       "ConceptMap": {
-          "template-base": "cm.html"
+          "template-base": "conf.html"
       },
       "OperationDefinition": {
-          "template-base": "op.html"
+          "template-base": "conf.html"
       },
       "StructureDefinition": {
           "template-base": "sd.html",
@@ -34,7 +34,7 @@ igpy = {
           "profiles": False
       },
       "ValueSet": {
-          "template-base": "vs.html"
+          "template-base": "conf.html"
       }
   },
   "dependencyList": [{}],
