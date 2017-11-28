@@ -170,7 +170,7 @@ def update_example(type, id, filename):
     update_igxml(type, 'example', id)  # add example to ig.xml file
     update_igjson(type, id)  # add example base to definitions file
     update_igjson(type, id,'source', filename) # add source filename to definitions file
-    ig.igpy['defaults'][type] = {'template-base': 'base.html'}  # add example template for type
+    ig.igpy['defaults'][type] = {'template-base': 'ex.html'}  # add example template for type
     logging.info('adding example template to type ' +type + ' in ig.json')
     return
 
