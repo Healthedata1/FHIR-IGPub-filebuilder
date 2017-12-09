@@ -13,9 +13,11 @@ logging.info('create the ig.json file template as dictionary')
 
 # globals
 
-dir = os.getcwd() + '/' # current dir
-logging.info('cwd = ' + dir)
-
+root_dir = os.getcwd() + '/' # current root_dir
+logging.info('root dir = ' + root_dir)
+resources_path = root_dir
+examples_path = root_dir
+pages_path = root_dir
 # Function definitions here
 
 def init_igpy():
@@ -65,27 +67,29 @@ def init_igpy():
 def make_op_frag(frag_id):  # create [id].md file for new operations
 
     # check if files already exist before writing files
-    frag = dir + 'pages/_includes/' + frag_id
-
+    frag = '{}/_includes/{}'.format(pages_path, frag_id)
     fragf = open(frag + '.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.op_frag))
     logging.info('added file: ' + frag + '.md')
+    fragf.close()
     return
 
 def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md and [id]-summary.md files
 
     # check if files already exist before writing files
-    frag = dir + 'pages/_includes/'+ frag_id
-
+    frag = '{}/_includes/{}'.format(pages_path, frag_id)
     fragf = open(frag + '-intro.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.intro))
     logging.info('added file: ' + frag + '-intro.md')
+    fragf.close()
     fragf = open(frag + '-summary.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.sumry))
     logging.info('added file: ' + frag + '-summary.md')
+    fragf.close()
     fragf = open(frag + '-search.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.srch))
-    logging.info('added file: ' + frag +'-search.md')
+    logging.info('added file: ' + frag + '-search.md')
+    fragf.close()
     return
 
 def update_sd(i, type, logical):
@@ -93,9 +97,9 @@ def update_sd(i, type, logical):
                   'x': 'urn:schemas-microsoft-com:office:excel',
                   'ss': 'urn:schemas-microsoft-com:office:spreadsheet', }
     ig.igpy['spreadsheets'].append(i)
-    logging.info('cwd = ' + dir)
+    logging.info('cwd = ' + root_dir)
     logging.info('adding ' + i + ' to spreadsheets array')
-    sd_file = open(dir + 'resources/' + i)  # for each spreadsheet in /resources open value and read  SD id and create and append dict struct to definiions file
+    sd_file = open('{}/{}'.format(resources_path,i))  # for each spreadsheet in /resources open value and read  SD id and create and append dict struct to definiions file
     sdxml = etree.parse(sd_file)  # lxml module to parse excel xml
     if logical:
         sdid = sdxml.xpath('/ss:Workbook/ss:Worksheet[2]/ss:Table/ss:Row[2]/ss:Cell[2]/ss:Data',                       namespaces=namespaces)  # use xpath to get the id from the spreadsheet sheet2 "metadata" row2 column2" and retain case
@@ -107,9 +111,9 @@ def update_sd(i, type, logical):
         temp_id = sdid[0].text.lower()
     update_igjson(type, temp_id) # add base to definitions file
     update_igjson(type, temp_id, 'defns') # add base to definitions file
-    if not os.path.exists(dir + 'pages/_includes/'+ temp_id + '-intro.md'):  # if intro fragment is missing then create new page fragments for extension
+    if not os.path.exists('{}/{}-intro.md'.format(pages_path, temp_id)):  # if intro fragment is missing then create new page fragments for extension
         make_frags(temp_id)
-
+    sd_file.close()
     return
 
 def update_igxml(type, purpose, id):
@@ -141,7 +145,7 @@ def update_igjson(type, id, template = 'base', filename = "blah"): # add base to
 
 def update_def(filename, type, purpose):
     vsid_re = re.compile(r'<id value="(.*)"/>')  # regex for finding the index in vs
-    with open('{}resources/{}'.format(dir, filename), 'r') as f:  # load xml file and update string metadata variables and url
+    with open('{}/{}'.format(resources_path, filename), 'r') as f:  # load xml file and update string metadata variables and url
         vsxml = f.read()  # convert to string
         logging.info('file = {}'.format(filename))
         vsmo = vsid_re.search(vsxml)  # get match object which contains id
@@ -151,16 +155,16 @@ def update_def(filename, type, purpose):
             logging.info('updating {} to insert variables for publisher and urls and status = {}'.format(filename, vsxml))
         except KeyError:
             pass
-    with open('{}resources/{}'.format(dir, filename), 'w') as f:  # overwrite xml file with updated file
+    with open('{}/{}'.format(resources_path, filename), 'w') as f:  # overwrite xml file with updated file
         f.write(vsxml)
     update_igjson(type, vsid)  # add base to definitions file
     update_igjson(type, vsid, 'source', filename)  # add source filename to definitions file
     if type == 'StructureDefinition':
       update_igjson(type, vsid, 'defns')  # add base to definitions file
-      if not os.path.exists(dir + 'pages/_includes/'+ vsid + '-intro.md'):  # if intro file fragment is missing then create new page fragments for extension
+      if not os.path.exists('{}/{}-intro.md'.format(pages_path, vsid)):  # if intro file fragment is missing then create new page fragments for extension
           make_frags(vsid)
     if type == 'OperationDefinition':
-      if not os.path.exists(dir + 'pages/_includes/'+ vsid + '.md'):  # if file is missing then create new page fragments for extension
+      if not os.path.exists('{}/{}.md'.format(pages_path, vsid)):  # if file is missing then create new page fragments for extension
         make_op_frag(vsid)
     update_igxml(type, purpose, vsid)
     return
@@ -176,15 +180,35 @@ def update_example(type, id, filename):
 
 
 def get_file(e):
-    ex_file = open(dir + 'examples/' + e)  # for each example in /examples open
-    logging.info('load example xml file ' + dir + 'examples/' + e)
+    ex_file = open('{}/{}'.format(examples_path, e))  # for each example in /examples open
+    logging.info('load example xml file {}/{}'.format(examples_path, e))
     return ex_file
 
 def main():
     init_igpy()  # read CSV file and update the configuration data
     # global ig.igxml
+    #get path for resources and examples
+    try:
+        global resources_path
+        resources_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['resources'][0])
+        global examples_path
+        examples_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['resources'][1])
+        global pages_path
+        pages_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['pages'][1], '_includes')
+    except TypeError:
+        global resources_path
+        resources_path = os.path.join(root_dir, ig.igpy['paths']['resources'][0])
+        global examples_path
+        examples_path = os.path.join(root_dir, ig.igpy['paths']['resources'][1])
+        global pages_path
+        pages_path = os.path.join(root_dir, ig.igpy['paths']['pages'][1], '_includes')
+
+    logging.info('source resources path = ' + resources_path)
+    logging.info('source examples path = ' + examples_path)
+    logging.info('source pages path = ' + pages_path)
+
     ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
-    resources = os.listdir(dir + 'resources')  # get all the files in the resource directory
+    resources = os.listdir(resources_path)  # get all the files in the resource directory
     for i in range(len(resources)):  # run through all the files looking for spreadsheets and valuesets
         if 'spreadsheet' in resources[i]: # for spreadsheets  append to the igpy[spreadsheet] array.
             if 'logical' in resources[i]:  # check if logical model
@@ -204,7 +228,7 @@ def main():
             update_def(resources[i], 'CapabilityStatement', 'conformance')
         if ('operationdefinition' in resources[i]) or ('OperationDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'OperationDefinition', 'conformance')
-        if ('structuredefinition' in resources[i]) or ('StructureDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
+        if ('structuredefinition' in resources[i]) or ('StructureDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definitions file
             update_def(resources[i], 'StructureDefinition', 'conformance')
         if ('structuremap' in resources[i]) or ('SructureMap' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'StructureMap', 'conformance')
@@ -216,7 +240,8 @@ def main():
     for extension in ig.igpy['extensions']:
         update_igjson('StructureDefinition', extension, 'base')
         update_igjson('StructureDefinition', extension, 'defns')
-        if not os.path.exists(dir + 'pages/_includes/'+ extension + '-intro.md'):  # if intro fragment is missing then create new page fragments for extension
+        logging.info('intro page = {}/{}-intro.md'.format(pages_path, extension))
+        if not os.path.exists('{}/{}-intro.md'.format(pages_path, extension)):  # if intro fragment is missing then create new page fragments for extension
             make_frags(extension)
     # add spreadsheet search parameters
     for search in ig.igpy['searches']:
@@ -232,7 +257,7 @@ def main():
     for structuremap in ig.igpy['structuremaps']:
        update_igjson('StructureMap', structuremap, 'base')
 
-    examples = os.listdir(dir + 'examples')  # get all the examples in the examples directory assuming are in json or xml
+    examples = os.listdir(examples_path)  # get all the examples in the examples directory assuming are in json or xml
     for i in range(len(examples)):  # run through all the examples and get id and resource type
         if 'json' in examples[i]:  # for each cs in /resources open, read id and create and append dict struct to definiions file
             exjson = json.load(get_file(examples[i]))
@@ -244,7 +269,7 @@ def main():
             ex_id = ex_xml.xpath('//f:id/@value', namespaces={'f': 'http://hl7.org/fhir'})  # use xpath to get the id
             extype = ex_xml.xpath('name(/*)')  # use xpath to get the type '''
             update_example(extype, ex_id[0], examples[i])
-    return
+    return()
 
 #  main
 
@@ -252,14 +277,15 @@ if __name__ == '__main__':
     main()
 
     # write files
-    ig_file = open(dir + 'resources/ig.xml', 'w')
+    ig_file = open('{}/ig.xml'.format(resources_path), 'w')
     ig_file.write(ig.igxml)  # replace ig.xml with this file
     logging.info('ig.xml now looks like : ' + ig.igxml)
     if ig.igpy['igtemplate-dir']:
-        dir = ig.igpy['igtemplate-dir']  # change to the ig template path name specified in the csv file if present to write to ig.json file in templates file
-        logging.info('cwd = {}'.format(dir))
-    ig_file = open(dir + 'ig.json', 'w')
+        root_dir = ig.igpy['igtemplate-dir']  # change to the ig template path name specified in the csv file if present to write to ig.json file in templates file
+        logging.info('copying ig.json to: {}'.format(root_dir))
+    ig_file = open(root_dir + 'ig.json', 'w')
     ig_file.write(json.dumps(ig.igpy))  # convert dict to json and replace ig.json with this file
+    ig_file.close()
     logging.info('ig.json now looks like : ' + json.dumps(ig.igpy))
 
     logging.info('End of program')
