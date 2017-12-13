@@ -15,7 +15,8 @@ logging.info('create the ig.json file template as dictionary')
 
 root_dir = os.getcwd() + '/' # current root_dir
 logging.info('root dir = ' + root_dir)
-resources_path = root_dir
+# the following paths are defined in the definitions file and the order for this is important - resources path is assumed to be the first item and examples the second see below
+resources_path = root_dir  # initializes to root
 examples_path = root_dir
 pages_path = root_dir
 # Function definitions here
@@ -67,7 +68,7 @@ def init_igpy():
 def make_op_frag(frag_id):  # create [id].md file for new operations
 
     # check if files already exist before writing files
-    frag = '{}/_includes/{}'.format(pages_path, frag_id)
+    frag = '{}/{}'.format(pages_path, frag_id)
     fragf = open(frag + '.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.op_frag))
     logging.info('added file: ' + frag + '.md')
@@ -77,7 +78,7 @@ def make_op_frag(frag_id):  # create [id].md file for new operations
 def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md and [id]-summary.md files
 
     # check if files already exist before writing files
-    frag = '{}/_includes/{}'.format(pages_path, frag_id)
+    frag = '{}/{}'.format(pages_path, frag_id)
     fragf = open(frag + '-intro.md', 'w')
     fragf.write('source: {}.md file\n{}'.format(frag_id, ig.intro))
     logging.info('added file: ' + frag + '-intro.md')
@@ -187,7 +188,7 @@ def get_file(e):
 def main():
     init_igpy()  # read CSV file and update the configuration data
     # global ig.igxml
-    #get path for resources and examples
+    # get path for resources and examples which are defined in the definitions file and the order for this is important - resources path is assumed to be the first item and examples the second, the source pages the second item in the list as well. ( the first item is path to the static template pages and assets )
     try:
         global resources_path
         resources_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['resources'][0])
