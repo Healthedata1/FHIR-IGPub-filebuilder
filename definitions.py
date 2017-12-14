@@ -202,7 +202,7 @@ def main():
         global examples_path
         examples_path = os.path.join(root_dir, ig.igpy['paths']['resources'][1])
         global pages_path
-        pages_path = os.path.join(root_dir, ig.igpy['paths']['pages'][1], '_includes')
+        pages_path = os.path.join(root_dir, ig.igpy['paths']['pages'][0], '_includes')
 
     logging.info('source resources path = ' + resources_path)
     logging.info('source examples path = ' + examples_path)
