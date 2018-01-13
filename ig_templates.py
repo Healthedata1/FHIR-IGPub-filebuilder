@@ -76,13 +76,14 @@ igpy = {
   "codesystems": [],
   "valuesets": [],
   "structuremaps": [],
-  "working-dir": None
+  "working-dir": None,
+  "logging":[]
 }
 
 
 ''' this is the ig.xml as string file skeleton may need to modify as needed see ig publisher documenentation at  f http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation or more information. The Cap Case words are variables that are replaced by variables in the definitions file'''
 
-igxml ='''<?xml version="1.0" encoding="UTF-8"?><!--Hidden IG for de facto IG publishing--><ImplementationGuide xmlns="http://hl7.org/fhir"><id value="ig"/><url value="{canonicalBase}/ImplementationGuide/ig"/><name value="{title}"/><status value="{status}"/><experimental value="true"/><publisher value="{publisher}"/><package><name value="base"/></package><page><source value="index.html"/><title value="{title} Homepage"/><kind value="page"/><page><source value="_includes/toc.md"/><title value="{title} Table of Contents"/><kind value="page"/></page></page></ImplementationGuide>'''
+igxml ='''<?xml version="1.0" encoding="UTF-8"?><!--Hidden IG for de facto IG publishing--><ImplementationGuide xmlns="http://hl7.org/fhir"><id value="ig"/><url value="{canonicalBase}/ImplementationGuide/ig"/><name value="{title}"/><status value="{status}"/><experimental value="true"/><publisher value="{publisher}"/><package><name value="base"/></package><page><source value="index.md"/><title value="{title} Homepage"/><kind value="page"/><page><source value="_includes/toc.md"/><title value="{title} Table of Contents"/><kind value="page"/></page></page></ImplementationGuide>'''
 
 
 # default content for files

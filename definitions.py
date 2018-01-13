@@ -110,6 +110,7 @@ def update_sd(i, type, logical):
         sdid = sdxml.xpath('/ss:Workbook/ss:Worksheet[2]/ss:Table/ss:Row[11]/ss:Cell[2]/ss:Data',
                        namespaces=namespaces)  # use xpath to get the id from the spreadsheet sheet2 "metadata" row11  column2" and lower case
         temp_id = sdid[0].text.lower()
+        update_igxml('StructureDefinition','conformance' , temp_id) # add to ig.xml as an SD
     update_igjson(type, temp_id) # add base to definitions file
     update_igjson(type, temp_id, 'defns') # add base to definitions file
     if not os.path.exists('{}/{}-intro.md'.format(pages_path, temp_id)):  # if intro fragment is missing then create new page fragments for extension
@@ -241,6 +242,8 @@ def main():
     for extension in ig.igpy['extensions']:
         update_igjson('StructureDefinition', extension, 'base')
         update_igjson('StructureDefinition', extension, 'defns')
+        update_igxml('StructureDefinition','conformance' , extension) # add to ig.xml as an SD
+
         logging.info('intro page = {}/{}-intro.md'.format(pages_path, extension))
         if not os.path.exists('{}/{}-intro.md'.format(pages_path, extension)):  # if intro fragment is missing then create new page fragments for extension
             make_frags(extension)
