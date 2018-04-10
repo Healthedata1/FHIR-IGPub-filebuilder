@@ -3,7 +3,7 @@
 ''' this is the definitions file skeleton you need to modify as needed see ig publisher documenentation at  http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation or more information. NOTE the if the dependencyList is empty then a "Property error" is generated.'''
 
 igpy = {
-  "broken-links": "warning",
+  "broken-links": None,
   "canonicalBase": "http://www.fhir.org/guides/test",
   "defaults": {
       "Any": {
@@ -49,6 +49,7 @@ igpy = {
   "gen-examples": "false",
   "html-template": "html-template.html",
   "jurisdiction": "US",
+  "license": "CC0-1.0",
   "no-inactive-codes": "false",
   "paths": {
       "output": "output",
