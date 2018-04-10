@@ -10,6 +10,8 @@ templates in separate module: `ig_template.py`
 
 Assumptions and Preconditions:
 
+source directory needs to have a definitions.csv file ( an example is provided above )
+
 Needs to be python 3.5 (not sure about 3.6)
 
 'requirements.txt' - contains list of external libraries
