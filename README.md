@@ -6,11 +6,12 @@ to run from command line:
 
 `>python3.5 definition.py`
 
-templates in separate module: `ig_template.py`
+templates: `ig_template.py`
 
 Assumptions and Preconditions:
 
-source directory needs to have a definitions.csv file ( an example is provided above )
+source directory needs to have a definitions.csv file ( an example is provided above )  **which should be modified in a text editor and not excel** (unless you import and export the data) since excel will mess it up.
+
 
 Needs to be python 3.5 (not sure about 3.6)
 
