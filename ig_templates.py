@@ -3,6 +3,7 @@
 ''' this is the definitions file skeleton you need to modify as needed see ig publisher documenentation at  http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation or more information. NOTE the if the dependencyList is empty then a "Property error" is generated.'''
 
 igpy = {
+  "npm-name": "healthedatainc.igtemplate",
   "broken-links": None,
   "canonicalBase": "http://www.fhir.org/guides/test",
   "defaults": {
@@ -48,7 +49,7 @@ igpy = {
   "fixed-business-version": "0.0.0",
   "gen-examples": "false",
   "html-template": "html-template.html",
-  "jurisdiction": "US",
+  "jurisdiction": "",
   "license": "CC0-1.0",
   "no-inactive-codes": "false",
   "paths": {
@@ -78,7 +79,14 @@ igpy = {
   "valuesets": [],
   "structuremaps": [],
   "working-dir": None,
-  "logging":[]
+  "logging":[],
+  "topofpage": "true",
+  "allviews": "true",
+  "mappings": "true",
+  "swagger" : [{
+  "mode" : "single",
+  "capabilities" : "server",
+ }]
 }
 
 
@@ -86,31 +94,83 @@ igpy = {
 
 igxml ='''<?xml version="1.0" encoding="UTF-8"?><!--Hidden IG for de facto IG publishing--><ImplementationGuide xmlns="http://hl7.org/fhir"><id value="ig"/><url value="{canonicalBase}/ImplementationGuide/ig"/><name value="{title}"/><status value="{status}"/><experimental value="true"/><publisher value="{publisher}"/><package><name value="base"/></package><page><source value="index.md"/><title value="{title} Homepage"/><kind value="page"/><page><source value="_includes/toc.md"/><title value="{title} Table of Contents"/><kind value="page"/></page></page></ImplementationGuide>'''
 
+igxml2='''<?xml version="1.0" encoding="UTF-8"?>
+<!--Hidden IG for de facto IG publishing-->
+<ImplementationGuide xmlns="http://hl7.org/fhir">
+  <id value="ig"/>
+  <url value="{canonicalBase}/ImplementationGuide/ig"/>
+  <version value="{fixed-business-version}"/>
+  <name value="{title}"/>
+  <status value="{status}"/>
+  <publisher value="{publisher}"/>
+  <copyright value="Used by permission of {publisher}, all rights reserved Creative Commons License"/>
+  <!-- 0..1 Use and/or publishing restrictions -->
+  <!-- <packageId value="healthedatainc.ig-test3"/> -->
+  <!-- 0..1 NPM Package name for IG -->
+  <!-- <license value="CC0-1.0"/> -->
+  <!-- 0..1 SPDX license code for this IG (or not-open-source) -->
+  <fhirVersion value="3.4.0"/>
+  <!-- 0..1 FHIR Version this Implementation Guide targets -->
+  <definition>
+     <!-- <resource>
+       <reference>
+     <reference value="[type]/[id]"/>
+     </reference>
+        <name value="Test Example"/>
+      <description value="A test example to show how a implementation guide works"/>
+      <exampleCanonical value="http://hl7.org/fhir/us/core/StructureDefinition/patient"/>|<exampleBoolean value="true|false"/>
+    </resource>   -->
+    <page>
+      <nameUrl value="index.md"/>
+      <title value="{title} Homepage"/>
+      <generation value="markdown"/>
+    </page>
+  </definition>
+</ImplementationGuide>
+'''
+
 
 # default content for files
 intro = '''
-    This is the introduction markdown file that gets inserted into the sd.html template.
+{% assign id = {{page.id}} %}
+source file: source/pages/\_includes/{{id}}-intro.md
 
-    This profile sets minimum expectations for blah blah blah
+{{site.data.structuredefinitions.[id].description}}
 
-    ##### Mandatory Data Elements and Terminology
+#### Scope and Usage
 
-    The following data-elements are mandatory (i.e data MUST be present). blah blah blah
+scope and usage text here
 
-    **must have:**
+#### Mandatory Data Elements and Terminology
 
-    1. blah
-    1. blah
-    1. blah
+The following data-elements are mandatory (i.e data MUST be present). blah blah blah
 
-    **Additional Profile specific implementation guidance:**
+**must have:**
 
-    #### Examples
+1. blah
+1. blah
+1. blah
+
+**Additional Profile specific implementation guidance:**
+
+#### Examples
+
+- list examples here
 '''
-srch = '''
-    This is the search markdown file that gets inserted into the sd.html Quick Start section for explanation of the search requirements.
+search = '''
+{% assign id = {{page.id}} %}
+source file: source/pages/\_includes/{{id}}-search.md
+
+~~~
+This is the search markdown file that gets inserted into the sd.html Quick Start section for explanation of the search requirements.
+~~~
 '''
-sumry = '''
+
+# not used for now
+summary = '''
+{% assign id = {{page.id}} %}
+source file: source/pages/\_includes/{{id}}-summary.md
+
     This is the summary markdown file that gets inserted into the sd.html template. for a more formal narrative summary of constraints.  in future hope to automate this to computer generated code.
 
     #### Complete Summary of the Mandatory Requirements
@@ -123,4 +183,13 @@ sumry = '''
 # default content for files
 op_frag = '''
     This is the  markdown file that gets inserted into the op.html template.
+'''
+diff2 = '''
+<!-- stubbed file need actual file name of diff fragment {% raw %}
+{% assign id = {{include.id}} %}
+<p><b>Intermediate Differential View ({{include.type}}-{{include.id}} Profile + {{site.data.structuredefinitions.[id].basename}} Profile)</b></p>
+<div id="all-tbl-diff2-inner">
+  {% include {{include.type}}-argo-clinicalnotes-diff.xhtml %}
+</div>
+{% endraw %} -->
 '''

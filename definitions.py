@@ -58,7 +58,7 @@ def init_igpy():
                         try:  # deal with lists first : append csv element to dict value
                             ig.igpy[row[0]].append(itemz)
                             logging.info('updating ig.json with this:  { "' + row[0] + '": [..."' + itemz + '",...] }')
-                        except AttributeError:  # simple key value pairs
+                        except (AttributeError, KeyError):  # simple key value pairs
                             ig.igpy[row[0]] = itemz  # add/replace csv element to existing dict file
                             logging.info('updating ig.json with this:  { "' + row[0] + '": "' + itemz + '" }')
                 except AttributeError: # nested dict elements
@@ -72,11 +72,18 @@ def init_igpy():
                         except IndexError:
                             ig.igpy[row_key0].append({row_key1:itemz}) # create an object for each item in cell
                         logging.info('updating ig.json with this: { "' + row_key0 + '"[' + str(item) + ']' +':{ "' + row_key1 + '": "' + itemz + '",... }')
-    # check if dependencyList is empty since this will lead to error GF#
-    if ig.igpy['dependencyList'] == [{}]:
-        logging.info("dependencyList is empty!")
-        del ig.igpy['dependencyList']
+
     return
+
+def scrub_igpy():  #scrub any rows that are blank.
+    igjson = ig.igpy
+    Empteez = ['',[],None,{},[{}]]
+    for k in list(ig.igpy):
+        if ig.igpy[k] in Empteez:
+            logging.info("element {} is empty!".format(k))
+            del igjson[k]
+    return(igjson)
+
 
 def make_op_frag(frag_id):  # create [id].md file for new operations
 
@@ -88,22 +95,16 @@ def make_op_frag(frag_id):  # create [id].md file for new operations
     fragf.close()
     return
 
-def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md and [id]-summary.md files
 
-    # check if files already exist before writing files
-    frag = '{}/_includes/{}'.format(pages_path, frag_id)
-    fragf = open(frag + '-intro.md', 'w')
-    fragf.write('source: {}.md file\n{}'.format(frag_id, ig.intro))
-    logging.info('added file: ' + frag + '-intro.md')
-    fragf.close()
-    fragf = open(frag + '-summary.md', 'w')
-    fragf.write('source: {}.md file\n{}'.format(frag_id, ig.sumry))
-    logging.info('added file: ' + frag + '-summary.md')
-    fragf.close()
-    fragf = open(frag + '-search.md', 'w')
-    fragf.write('source: {}.md file\n{}'.format(frag_id, ig.srch))
-    logging.info('added file: ' + frag + '-search.md')
-    fragf.close()
+def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md and [id]-diff2.md turned off [id]-summary.md files since not supported for now
+    frags = ['intro', 'search', 'diff2']
+    for f in frags:
+        frag = '{}/_includes/{}-{}.md'.format(pages_path, frag_id, f)
+        if not os.path.exists(frag):  # check if files already exist before writing files
+            fragf = open(frag, 'w')
+            fragf.write('{}'.format(getattr(ig, f)))
+            logging.info('added file: {}'.format(frag))
+            fragf.close()
     return
 
 def update_sd(i, type, logical):
@@ -127,8 +128,7 @@ def update_sd(i, type, logical):
     update_igjson(type, temp_id) # add base to definitions file
     update_igjson(type, temp_id, 'defns') # add base to definitions file
     logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, temp_id))
-    if not os.path.exists('{}/_includes/{}-intro.md'.format(pages_path, temp_id)):  # if intro fragment is missing then create new page fragments for extension
-        make_frags(temp_id)
+    make_frags(temp_id)
     sd_file.close()
     return
 
@@ -136,12 +136,21 @@ def update_igxml(type, purpose, id):
     ev = 'false'
     if purpose == "example":
         ev = 'true'
-    vsxml = '<resource><example value="' + ev + '"/><sourceReference><reference value="' + type + '/' + id + '"/></sourceReference></resource>'  # concat id into appropriate string
-    # global ig.igxml
-    ig.igxml = ig.igxml.replace('name value="base"/>',
-                            'name value="base"/>' + vsxml)  # add valueset base def to ig resource
-    logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
-    return
+    if ig.igpy['version'] != '3.4.0':
+        vsxml = '<resource><example value="' + ev + '"/><sourceReference><reference value="' + type + '/' + id + '"/></sourceReference></resource>'  # concat id into appropriate string
+        # global ig.igxml
+        ig.igxml = ig.igxml.replace('name value="base"/>',
+                                'name value="base"/>' + vsxml)  # add valueset base def to ig resource
+        logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
+        return()
+    else:
+        vsxml = '<resource><reference><reference value="' + type + '/' + id + '"/></reference><exampleBoolean value="' + ev +'"/></resource>'  # concat id into appropriate string
+        # global ig.igxml
+        ig.igxml = ig.igxml.replace('<definition>','<definition>'
+                                + vsxml)  # add resource to ig resource
+        logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
+        return()
+
 
 def update_igjson(type, id, template = 'base', filename = "blah"): # add base to ig.json - can extend for other templates if needed with extra 'template' param
     if template == 'base':
@@ -185,9 +194,7 @@ def update_def(filename, type, purpose):  # read either json or xml and update t
     update_igjson(type, vsid, 'source', filename)  # add source filename to definitions file
     if type == 'StructureDefinition':
       update_igjson(type, vsid, 'defns')  # add base to definitions file
-      logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, vsid))
-      if not os.path.exists('{}/_includes/{}-intro.md'.format(pages_path, vsid)):  # if intro file fragment is missing then create new page fragments for extension
-          make_frags(vsid)
+      make_frags(vsid)
     if type == 'OperationDefinition':
       logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, vsid))
       if not os.path.exists('{}/_includes/{}.md'.format(pages_path, vsid)):  # if file is missing then create new page fragments for extension
@@ -217,7 +224,7 @@ def main():
     global examples_path
     global pages_path
 
-    init_igpy()  # read CSV file and update the configuration data
+    igjson = init_igpy()  # read CSV file and update the configuration data
     # global ig.igxml
     # get path for resources and examples which are defined in the definitions file and the order for this is important - resources path is assumed to be the first item and examples the second, the source pages the second item in the list as well. ( the first item is path to the static template pages and assets )
     try:  # if source = argv[1] is external directory then need to update ig.json
@@ -244,8 +251,10 @@ def main():
     logging.info('source resources path = ' + resources_path)
     logging.info('source examples path = ' + examples_path)
     logging.info('source pages path = ' + pages_path)
-
-    ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
+    if ig.igpy['version'] != '3.4.0':
+        ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
+    else:
+        ig.igxml = ig.igxml2.format(**ig.igpy)  # add title, publisher etc to ig.xml
     resources = os.listdir(resources_path)  # get all the files in the resource directory
     for i in range(len(resources)):  # run through all the files looking for spreadsheets and valuesets
         if 'spreadsheet' in resources[i]: # for spreadsheets  append to the igpy[spreadsheet] array.
@@ -281,8 +290,7 @@ def main():
         update_igxml('StructureDefinition','conformance' , extension) # add to ig.xml as an SD
 
         logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, extension))
-        if not os.path.exists('{}/_includes/{}-intro.md'.format(pages_path, extension)):  # if intro fragment is missing then create new page fragments for extension
-            make_frags(extension)
+        make_frags(extension)
     # add spreadsheet search parameters
     for search in ig.igpy['searches']:
        update_igjson('SearchParameter', search, 'base')
@@ -326,6 +334,20 @@ def write_igxml(path, igxml):
     return
 
 
+# edit front matter for sd.html
+def edit_frontmatter(path, igpy):
+    logging.info('mappings = {}'.format(igpy['mappings']))
+    with open('{}/sd.html'.format(path), 'r') as f:
+        newline = []  # create new copy
+        for line in f:
+            line = line.replace('mappings: true', 'mappings: {}'.format(igpy['mappings']))  ## Replace the keyword while you copy.
+            line = line.replace('allviews: true', 'allviews: {}'.format(igpy['allviews']))
+            newline.append(line)  # Replace the keyword while you copy.
+            logging.info('appended this line to copy {}'.format(line))
+    with open('{}/sd.html'.format(path), 'w') as f:
+        f.writelines(newline)  # replace sd.html with new copy
+    return
+
 #  main
 
 if __name__ == '__main__':
@@ -335,12 +357,18 @@ if __name__ == '__main__':
     logging.info('ig.xml now looks like : ' + ig.igxml)
     # replace ig.xml with this file - write files and copy to source directory
     write_igxml(resources_path,ig.igxml)
-
+    # scrub empty fields out of ig.exjson
+    ig.igpy = scrub_igpy()
     logging.info('ig.json now looks like : ' + json.dumps(ig.igpy))
     try:
         write_igjson(source_dir,ig.igpy)  # copy to source directory
     except IndexError:
         pass
+
+    # update sd.html in root_dir if needed
+
+    edit_frontmatter(root_dir, ig.igpy)
+
 
     # update ig.json in root
     ig.igpy['paths']['resources'][0] = '{}source/resources'.format(source_dir) # needs to be 1 element
