@@ -136,20 +136,21 @@ def update_igxml(type, purpose, id):
     ev = 'false'
     if purpose == "example":
         ev = 'true'
-    if ig.igpy['version'] != '3.4.0':
-        vsxml = '<resource><example value="' + ev + '"/><sourceReference><reference value="' + type + '/' + id + '"/></sourceReference></resource>'  # concat id into appropriate string
-        # global ig.igxml
-        ig.igxml = ig.igxml.replace('name value="base"/>',
-                                'name value="base"/>' + vsxml)  # add valueset base def to ig resource
-        logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
-        return()
+
+    #################################
+    if ig.igpy['version'] != '3.5.0':
+        vsxml = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'  # concat id into appropriate string
     else:
-        vsxml = '<resource><reference><reference value="' + type + '/' + id + '"/></reference><exampleBoolean value="' + ev +'"/></resource>'  # concat id into appropriate string
-        # global ig.igxml
-        ig.igxml = ig.igxml.replace('<definition>','<definition>'
-                                + vsxml)  # add resource to ig resource
-        logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
-        return()
+        vsxml = '<resource><reference><reference value="{type}/{id}"/></reference><exampleBoolean value="{ev}"/></resource>'  # concat id into appropriate string
+    ################################
+
+
+    # global ig.igxml
+
+    ig.igxml = ig.igxml.replace('<!-- insert resources -->','<!-- insert resources -->'
+                            + vsxml.format(ev=ev,type=type,id=id))  # add resource to ig resource
+    logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
+    return()
 
 
 def update_igjson(type, id, template = 'base', filename = "blah"): # add base to ig.json - can extend for other templates if needed with extra 'template' param
@@ -251,10 +252,14 @@ def main():
     logging.info('source resources path = ' + resources_path)
     logging.info('source examples path = ' + examples_path)
     logging.info('source pages path = ' + pages_path)
-    if ig.igpy['version'] != '3.4.0':
+
+    #################################
+    if ig.igpy['version'] != '3.5.0':
         ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
     else:
         ig.igxml = ig.igxml2.format(**ig.igpy)  # add title, publisher etc to ig.xml
+    ################################
+
     resources = os.listdir(resources_path)  # get all the files in the resource directory
     for i in range(len(resources)):  # run through all the files looking for spreadsheets and valuesets
         if 'spreadsheet' in resources[i]: # for spreadsheets  append to the igpy[spreadsheet] array.

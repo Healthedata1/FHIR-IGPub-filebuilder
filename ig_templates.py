@@ -92,7 +92,33 @@ igpy = {
 
 ''' this is the ig.xml as string file skeleton may need to modify as needed see ig publisher documenentation at  f http://wiki.hl7.org/index.php?title=IG_Publisher_Documentation or more information. The Cap Case words are variables that are replaced by variables in the definitions file'''
 
-igxml ='''<?xml version="1.0" encoding="UTF-8"?><!--Hidden IG for de facto IG publishing--><ImplementationGuide xmlns="http://hl7.org/fhir"><id value="ig"/><url value="{canonicalBase}/ImplementationGuide/ig"/><name value="{title}"/><status value="{status}"/><experimental value="true"/><publisher value="{publisher}"/><package><name value="base"/></package><page><source value="index.md"/><title value="{title} Homepage"/><kind value="page"/><page><source value="_includes/toc.md"/><title value="{title} Table of Contents"/><kind value="page"/></page></page></ImplementationGuide>'''
+igxml ='''<?xml version="1.0" encoding="UTF-8"?>
+<!--Hidden IG for de facto IG publishing-->
+<ImplementationGuide xmlns="http://hl7.org/fhir">
+  <id value="ig"/>
+  <url value="{canonicalBase}/ImplementationGuide/ig"/>
+  <name value="{title}"/>
+  <status value="{status}"/>
+  <experimental value="true"/>
+  <publisher value="{publisher}"/>
+  <package>
+    <name value="base"/>
+<!-- <resource>   1..* Resource in the implementation guide -->
+<!--   <example value="[boolean]"/> 1..1 If not an example, has its normal meaning -->
+<!--   <name value="[string]"/> 0..1 Human Name for the resource -->
+<!--   <description value="[string]"/> 0..1 Reason why included in guide -->
+<!--   <acronym value="[string]"/> 0..1 Short code to identify the resource -->
+<!--   <source[x]>1..1 uri|Reference(Any) Location of the resource </source[x]> -->
+<!--    <exampleFor> 0..1 Reference(StructureDefinition) Resource this is an example of (if applicable) </exampleFor> -->
+<!-- </resource> -->
+    <!-- insert resources -->
+  </package>
+  <page>
+    <source value="index.md"/>
+    <title value="{title} Homepage"/>
+    <kind value="page"/>
+  </page>
+</ImplementationGuide>'''
 
 igxml2='''<?xml version="1.0" encoding="UTF-8"?>
 <!--Hidden IG for de facto IG publishing-->
@@ -105,21 +131,29 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
   <publisher value="{publisher}"/>
   <copyright value="Used by permission of {publisher}, all rights reserved Creative Commons License"/>
   <!-- 0..1 Use and/or publishing restrictions -->
-  <!-- <packageId value="healthedatainc.ig-test3"/> -->
-  <!-- 0..1 NPM Package name for IG -->
-  <!-- <license value="CC0-1.0"/> -->
-  <!-- 0..1 SPDX license code for this IG (or not-open-source) -->
-  <fhirVersion value="3.4.0"/>
-  <!-- 0..1 FHIR Version this Implementation Guide targets -->
-  <definition>
+ <packageId value="{npm-name}"/> <!-- 0..1 NPM Package name for IG -->
+<license value="CC0-1.0"/> <!--*****HARDCODED********* 0..1 SPDX license code for this IG (or not-open-source) -->
+<fhirVersion value="{version}"/> <!-- 0..1 FHIR Version this Implementation Guide targets -->
+ <definition>
+<!--  <package> --> <!-- 0..* Grouping used to present related resources in the IG -->
+<!--   <name value="[string]"/> --> <!-- 1..1 Descriptive name for the package -->
+<!--   <description value="[string]"/> --><!-- 0..1 Human readable text describing the package -->
+<!-- </package> -->
+
+    <package>
+      <name value="base"/>
+    </package>
+
      <!-- <resource>
        <reference>
-     <reference value="[type]/[id]"/>
-     </reference>
-        <name value="Test Example"/>
-      <description value="A test example to show how a implementation guide works"/>
-      <exampleCanonical value="http://hl7.org/fhir/us/core/StructureDefinition/patient"/>|<exampleBoolean value="true|false"/>
+             <reference value="[type]/[id]"/>
+       </reference>
+       <name value="Test Example"/>
+       <description value="A test example to show how a implementation guide works"/>
+       <exampleCanonical value="http://hl7.org/fhir/us/core/StructureDefinition/patient"/>|<exampleBoolean value="true|false"/>
     </resource>   -->
+
+    <!-- insert resources -->
     <page>
       <nameUrl value="index.md"/>
       <title value="{title} Homepage"/>
