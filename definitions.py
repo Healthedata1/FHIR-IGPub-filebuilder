@@ -138,10 +138,12 @@ def update_igxml(type, purpose, id):
         ev = 'true'
 
     #################################
-    if ig.igpy['version'] != '3.5.0':
+    if ig.igpy['version'] == ['1.0.2','3.0.1']:
         vsxml = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'  # concat id into appropriate string
+
     else:
         vsxml = '<resource><reference><reference value="{type}/{id}"/></reference><exampleBoolean value="{ev}"/></resource>'  # concat id into appropriate string
+
     ################################
 
 
@@ -254,10 +256,13 @@ def main():
     logging.info('source pages path = ' + pages_path)
 
     #################################
-    if ig.igpy['version'] != '3.5.0':
+    if ig.igpy['version'] in ['1.0.2','3.0.1']:
         ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
+
     else:
         ig.igxml = ig.igxml2.format(**ig.igpy)  # add title, publisher etc to ig.xml
+
+
     ################################
 
     resources = os.listdir(resources_path)  # get all the files in the resource directory
