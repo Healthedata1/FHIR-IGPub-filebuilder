@@ -138,7 +138,7 @@ def update_igxml(type, purpose, id):
         ev = 'true'
 
     #################################
-    if ig.igpy['version'] == ['1.0.2','3.0.1']:
+    if ig.igpy['version'] in ['1.0.2','3.0.1']:
         vsxml = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'  # concat id into appropriate string
 
     else:
