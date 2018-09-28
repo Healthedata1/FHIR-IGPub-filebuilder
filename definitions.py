@@ -260,7 +260,9 @@ def main():
         ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
 
     else:
-        ig.igxml = ig.igxml2.format(**ig.igpy)  # add title, publisher etc to ig.xml
+        ig.igpy['name'] = ig.igpy['title'].replace(' ','')# make name PascalCase assuming no other special character other that spaces
+        ig.igxml = ig.igxml2.format(**ig.igpy)  # add title,name, publisher etc to ig.xml
+
 
 
     ################################

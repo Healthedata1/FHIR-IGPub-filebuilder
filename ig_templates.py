@@ -9,7 +9,8 @@ igpy = {
   "defaults": {
       "Any": {
           "template-base": "base.html",
-          "template-format": "format.html"
+          "template-format": "format.html",
+          "swagger" : "true"
       },
       "CapabilityStatement": {
           "template-base": "base.html"
@@ -70,6 +71,7 @@ igpy = {
   "version": "3.1.0",
   "igtemplate-dir": None,
   "title": "Implementation Guide Template",
+  "name":"",
   "status": "draft",
   "publisher": "Health eData Inc",
   "pub_url": "ehaas@healthedatainc.com",
@@ -126,7 +128,8 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
   <id value="ig"/>
   <url value="{canonicalBase}/ImplementationGuide/ig"/>
   <version value="{fixed-business-version}"/>
-  <name value="{title}"/>
+  <name value="{name}"/>
+  <title value="{title}"/>
   <status value="{status}"/>
   <publisher value="{publisher}"/>
   <copyright value="Used by permission of {publisher}, all rights reserved Creative Commons License"/>
