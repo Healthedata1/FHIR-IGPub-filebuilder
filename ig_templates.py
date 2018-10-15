@@ -138,25 +138,23 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
 <license value="CC0-1.0"/> <!--*****HARDCODED********* 0..1 SPDX license code for this IG (or not-open-source) -->
 <fhirVersion value="{version}"/> <!-- 0..1 FHIR Version this Implementation Guide targets -->
  <definition>
-<!--  <package> --> <!-- 0..* Grouping used to present related resources in the IG -->
-<!--   <name value="[string]"/> --> <!-- 1..1 Descriptive name for the package -->
-<!--   <description value="[string]"/> --><!-- 0..1 Human readable text describing the package -->
-<!-- </package> -->
-
-    <package>
+  <!--  <grouping>  0..* Grouping used to present related resources in the IG -->
+  <!-- <name value="[string]"/> 1..1 Descriptive name for the package -->
+  <!--   <description value="[string]"/> 0..1 Human readable text describing the package -->
+  <!--  </grouping>  -->
+    <grouping>
       <name value="base"/>
-    </package>
-
-     <!-- <resource>
-       <reference>
-             <reference value="[type]/[id]"/>
-       </reference>
-       <name value="Test Example"/>
-       <description value="A test example to show how a implementation guide works"/>
-       <exampleCanonical value="http://hl7.org/fhir/us/core/StructureDefinition/patient"/>|<exampleBoolean value="true|false"/>
-    </resource>   -->
-
-    <!-- insert resources -->
+    </grouping>
+    <!-- <resource>
+    <reference>
+      <reference value="[type]/[id]"/>
+    </reference>
+    <name value="Test Example"/>
+    <description value="A test example to show how a implementation guide works"/>
+    <exampleCanonical value="http://hl7.org/fhir/us/core/StructureDefinition/patient"/>|<exampleBoolean value="true|false"/>
+  </resource>   -->
+  <!--  <groupingId value="[id]"/>  0..1 Grouping this is part of -->
+  <!-- insert resources -->
     <page>
       <nameUrl value="index.md"/>
       <title value="{title} Homepage"/>
