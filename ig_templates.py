@@ -49,7 +49,6 @@ igpy = {
   ],
   "fixed-business-version": "0.0.0",
   "gen-examples": "false",
-  "html-template": "html-template.html",
   "jurisdiction": "",
   "license": "CC0-1.0",
   "no-inactive-codes": "false",
@@ -68,7 +67,7 @@ igpy = {
   "special-urls": [],
   "spreadsheets": [],
   "tool": "jekyll",
-  "version": "3.1.0",
+  "version": "",
   "igtemplate-dir": None,
   "title": "Implementation Guide Template",
   "name":"",
@@ -115,11 +114,79 @@ igxml ='''<?xml version="1.0" encoding="UTF-8"?>
 <!-- </resource> -->
     <!-- insert resources -->
   </package>
-  <page>
-    <source value="index.md"/>
-    <title value="{title} Homepage"/>
-    <kind value="page"/>
+  <!-- ============ Home Page =============== -->
+<page><source value="index.html"/><title value="Home"/><kind value="page"/>
+
+  <!-- ============ Guidance Page =============== -->
+  <page><source value="guidance.html"/><title value="General Guidance"/><kind value="page"/></page>
+
+  <!-- ============ Profiles Page =============== -->
+  <page><source value="profiles.html"/><title value="Profiles and Extensions"/><kind value="page"/>
+
+     <!-- ============ Profiles and examples=============== -->
+     <!-- insert profiles -->
+    <!-- ============ End Profiles and examples=============== -->
+
+    <!-- ============ Extensions and examples =============== -->
+    <!-- insert extensions -->
+    <!-- ============ End Extensions and examples =============== -->
+
+    </page>
+  <!-- ============ Operations Page =============== -->
+  <page><source value="operations.html"/><title value="Operations"/><kind value="page"/>
+
+    <!-- ============ Operations and examples  =============== -->
+    <!-- insert operationdefinitions -->
+    <!-- ============ End Operations and examples  =============== -->
+
   </page>
+  <!-- ============ Terminology Page =============== -->
+
+  <page><source value="terminology.html"/><title value="Terminology"/><kind value="page"/>
+     <!-- ============ ValueSet   =============== -->
+    <!-- insert valuesets -->
+    <!-- ============ End ValueSet   =============== -->
+
+    <!-- ============ CodeSystems  =============== -->
+    <!-- insert codesystems -->
+    <!-- ============ End CodeSystems  =============== -->
+
+    <!-- ============ ConceptMaps   =============== -->
+    <!-- insert conceptmaps -->
+    <!-- ============ End ConceptMaps   =============== -->
+
+  </page>
+
+  <!-- ============ SearchParameter Page =============== -->
+  <page><source value="searchparameters.html"/><title value="Search Parameters"/><kind value="page"/>
+
+  <!-- ============ SearchParameters =============== -->
+  <!-- insert searchparameters -->
+  <!-- ============ End SearchParameters  =============== -->
+  </page>
+
+  <!-- ============ CapabilityStatement Page =============== -->
+  <page><source value="capstatements.html"/><title value="Capability Statements"/><kind value="page"/>
+
+  <!-- ============ CapabilityStatements    =============== -->
+    <!-- insert capabilitystatements -->
+  <!-- ============ End CapabilityStatements    =============== -->
+
+  </page>
+
+  <!-- ============ Security Page =============== -->
+  <page><source value="security.html"/><title value="Security"/><kind value="page"/></page>
+
+  <!-- ============ Downloads Page =============== -->
+  <page><source value="downloads.html"/><title value="Downloads"/><kind value="page"/></page>
+
+  <!-- ============ Examples Page=============== -->
+  <page><source value="all-examples.html"/><title value="All Examples"/><kind value="page"/></page>
+
+  <!-- ============ Table of Contents =============== -->
+  <page><source value="toc.html"/><title value="Table of Contents"/><kind value="toc"/></page>
+
+</page>
 </ImplementationGuide>'''
 
 igxml2='''<?xml version="1.0" encoding="UTF-8"?>
@@ -155,11 +222,79 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
   </resource>   -->
   <!--  <groupingId value="[id]"/>  0..1 Grouping this is part of -->
   <!-- insert resources -->
-    <page>
-      <nameUrl value="index.md"/>
-      <title value="{title} Homepage"/>
-      <generation value="markdown"/>
+
+    <!-- ============ Home Page =============== -->
+  <page><nameUrl value="index.html"/><title value="Home"/><generation value="markdown"/>
+
+    <!-- ============ Guidance Page =============== -->
+    <page><nameUrl value="guidance.html"/><title value="General Guidance"/><generation value="markdown"/></page>
+
+    <!-- ============ Profiles Page =============== -->
+    <page><nameUrl value="profiles.html"/><title value="Profiles and Extensions"/><generation value="markdown"/>
+
+     <!-- ============ Profiles and examples=============== -->
+     <!-- insert profiles -->
+    <!-- ============ End Profiles and examples=============== -->
+
+    <!-- ============ Extensions and examples =============== -->
+    <!-- insert extensions -->
+    <!-- ============ End Extensions and examples =============== -->
+
+      </page>
+    <!-- ============ Operations Page =============== -->
+    <page><nameUrl value="operations.html"/><title value="Operations"/><generation value="markdown"/>
+
+    <!-- ============ Operations and examples  =============== -->
+    <!-- insert operationdefinitions -->
+    <!-- ============ End Operations and examples  =============== -->
+
     </page>
+    <!-- ============ Terminology Page =============== -->
+
+    <page><nameUrl value="terminology.html"/><title value="Terminology"/><generation value="markdown"/>
+     <!-- ============ ValueSet   =============== -->
+    <!-- insert valuesets -->
+    <!-- ============ End ValueSet   =============== -->
+
+    <!-- ============ CodeSystems  =============== -->
+    <!-- insert codesystems -->
+    <!-- ============ End CodeSystems  =============== -->
+
+    <!-- ============ ConceptMaps   =============== -->
+    <!-- insert conceptmaps -->
+    <!-- ============ End ConceptMaps   =============== -->
+
+    </page>
+
+    <!-- ============ SearchParameter Page =============== -->
+    <page><nameUrl value="searchparameters.html"/><title value="Search Parameters"/><generation value="markdown"/>
+
+  <!-- ============ SearchParameters =============== -->
+  <!-- insert searchparameters -->
+  <!-- ============ End SearchParameters  =============== -->
+    </page>
+
+    <!-- ============ CapabilityStatement Page =============== -->
+    <page><nameUrl value="capstatements.html"/><title value="Capability Statements"/><generation value="markdown"/>
+
+  <!-- ============ CapabilityStatements    =============== -->
+    <!-- insert capabilitystatements -->
+  <!-- ============ End CapabilityStatements    =============== -->
+    </page>
+
+    <!-- ============ Security Page =============== -->
+    <page><nameUrl value="security.html"/><title value="Security"/><generation value="markdown"/></page>
+
+    <!-- ============ Downloads Page =============== -->
+    <page><nameUrl value="downloads.html"/><title value="Downloads"/><generation value="markdown"/></page>
+
+    <!-- ============ Examples Page=============== -->
+    <page><nameUrl value="all-examples.html"/><title value="All Examples"/><generation value="markdown"/></page>
+
+    <!-- ============ Table of Contents =============== -->
+    <page><nameUrl value="toc.html"/><title value="Table of Contents"/><generation value="html"/></page>
+
+  </page>
   </definition>
 </ImplementationGuide>
 '''
@@ -228,3 +363,26 @@ diff2 = '''
 </div>
 {% endraw %} -->
 '''
+
+'''template for generated profile pages and extraTemplates- assume the id is
+ [Type]-profile-[id].xml or json and title is from resource title.  profile
+  examples id is Type-[id]'''
+
+generated_page = '''
+<page>
+    <nameUrl value="{generated_id}"/>
+    <title value="{generated_title}"/>
+    <generation value="generated"/>
+    <!-- examples -->
+    {profile-examples}
+</page>'''
+
+# template for generated profile examples id is Type-[id]
+profile_examples = '''
+<page>
+    <nameUrl value="{id}"/>
+    <title value="{ID}"/>
+    <generation value="html"/>
+    <!-- examples -->
+    {profile-examples}
+</page>'''

@@ -2,6 +2,7 @@
 
 # create ig definition file with all value sets in the /resources directory
 import json, os, sys, logging, re, csv, ig_templates as ig
+import rR_dict as r
 from lxml import etree
 #logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s- %(message)s')
@@ -119,12 +120,12 @@ def update_sd(i, type, logical):
     if logical:
         sdid = sdxml.xpath('/ss:Workbook/ss:Worksheet[2]/ss:Table/ss:Row[2]/ss:Cell[2]/ss:Data',                       namespaces=namespaces)  # use xpath to get the id from the spreadsheet sheet2 "metadata" row2 column2" and retain case
         temp_id = sdid[0].text
-        update_igxml('StructureDefinition','logical' , temp_id) # add to ig.xml as an SD
+        update_igxml('StructureDefinition','logical' , temp_id) # add to ig.xml as an SD  TODO update the pages directory
     else:
         sdid = sdxml.xpath('/ss:Workbook/ss:Worksheet[2]/ss:Table/ss:Row[11]/ss:Cell[2]/ss:Data',
                        namespaces=namespaces)  # use xpath to get the id from the spreadsheet sheet2 "metadata" row11  column2" and lower case
         temp_id = sdid[0].text.lower()
-        update_igxml('StructureDefinition','conformance' , temp_id) # add to ig.xml as an SD
+        update_igxml('StructureDefinition','conformance', temp_id) # add to ig.xml as an SD
     update_igjson(type, temp_id) # add base to definitions file
     update_igjson(type, temp_id, 'defns') # add base to definitions file
     logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, temp_id))
@@ -132,26 +133,58 @@ def update_sd(i, type, logical):
     sd_file.close()
     return
 
+def make_title(title): # strip Type and make title case
+    new_title = []
+    for word in title.split('-'):
+        if word.lower() not in r.r_list:
+            if any(x.isupper() for x in word):
+                new_title.append(word)
+            else:
+                new_title.append(word.capitalize())
+        else:
+            new_title.append(r.r_map[word.lower()])
+    return(' '.join(new_title))
+
+
 def update_igxml(type, purpose, id):
+    logging.info('++++++++id = {id}'.format(id=id))
     ev = 'false'
+    kind = 'resource'
+    generation = 'generated'
     if purpose == "example":
         ev = 'true'
+        kind = 'example'
 
     #################################
     if ig.igpy['version'] in ['1.0.2','3.0.1']:
-        vsxml = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'  # concat id into appropriate string
+        vsxml_1 = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'.format(ev=ev,type=type,id=id)  # concat id into appropriate string for resourceType
+        vsxml_2 =   '<page><source value="{type}-{id}.html"/><title value="{type} {title}"/><kind value="{kind}"/></page>'.format(type=type,id=id,title=make_title(id),kind=kind)  # add resource to ig resource  # concat id into appropriate string for page
 
     else:
-        vsxml = '<resource><reference><reference value="{type}/{id}"/></reference><exampleBoolean value="{ev}"/></resource>'  # concat id into appropriate string
-
+        vsxml_1 = '<resource><reference><reference value="{type}/{id}"/></reference><exampleBoolean value="{ev}"/></resource>'.format(ev=ev,type=type,id=id)  # concat id into appropriate string
+        vsxml_2 =   '<page><nameUrl value="{type}-{id}.html"/><title value="{type} {title}"/><generation value="{generation}"/></page>'.format(type=type,id=id,title=make_title(id),generation=generation)  # add resource to ig resource  # concat id into appropriate string for page
     ################################
 
 
     # global ig.igxml
+    # add resources
+    ig.igxml = ig.igxml.replace('<!-- insert resources -->','<!-- insert resources -->{vsxml}'.format(vsxml=vsxml_1))  # add resource to ig resource
+    logging.info('adding {type} {vsxml} to resources in ig.xml'.format(type=type, vsxml=vsxml_1))
+    # add pages
+    if kind == 'resource':
+        if 'extension' in id.lower():
+            ig.igxml = ig.igxml.replace('<!-- insert extensions -->','<!-- insert extensions -->{vsxml}'.format(vsxml=vsxml_2))  # add extensions to ig resource
+        elif type.lower() == 'structuredefinition':
+            ig.igxml = ig.igxml.replace('<!-- insert profiles -->','<!-- insert profiles -->{vsxml}'.format(vsxml=vsxml_2))  # add profiles to ig resource
+        else:
+            ig.igxml = ig.igxml.replace('<!-- insert {type}s -->'.format(type=type.lower()),'<!-- insert {type}s -->{vsxml}'.format(type=type.lower(), vsxml=vsxml_2))  # add other conformnance resources to ig resource
 
-    ig.igxml = ig.igxml.replace('<!-- insert resources -->','<!-- insert resources -->'
-                            + vsxml.format(ev=ev,type=type,id=id))  # add resource to ig resource
-    logging.info('adding ' + type + vsxml + ' to resources in ig.xml')
+
+    logging.info('adding {type} {vsxml} to pages in ig.xml'.format(type=type, vsxml=vsxml_2))
+
+
+
+
     return()
 
 
