@@ -97,8 +97,8 @@ def make_op_frag(frag_id):  # create [id].md file for new operations
     return
 
 
-def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md and [id]-diff2.md turned off [id]-summary.md files since not supported for now
-    frags = ['intro', 'search', 'diff2']
+def make_frags(frag_id):  # create [id]-intro.md, [id]-search.md turned off [id]-diff2.md  [id]-summary.md files since not supported for now
+    frags = ['intro', 'search']
     for f in frags:
         frag = '{}/_includes/{}-{}.md'.format(pages_path, frag_id, f)
         if not os.path.exists(frag):  # check if files already exist before writing files
@@ -244,7 +244,7 @@ def update_example(type, id, filename):
     update_igjson(type, id)  # add example base to definitions file
     update_igjson(type, id,'source', filename) # add source filename to definitions file
     ig.igpy['defaults'][type] = {'template-base': 'ex.html'}  # add example template for type
-    logging.info('adding example template to type ' +type + ' in ig.json')
+    logging.info('adding example ' + filename + ' template to type ' +type + ' in ig.json')
     return
 
 
@@ -289,12 +289,21 @@ def main():
     logging.info('source pages path = ' + pages_path)
 
     #################################
+    try:   # allow for multiple contacts
+        contact_list = ""
+        for i in ig.igpy['contact']:
+            contact_list = '{}\n{}'.format(contact_list,ig.contact_item.format(**i))
+
+    except KeyError:
+        contact_list = ig.contact_item.format(**ig.igpy)
+    logging.info('contact list = ' + contact_list)
+
     if ig.igpy['version'] in ['1.0.2','3.0.1']:
-        ig.igxml = ig.igxml.format(**ig.igpy)  # add title, publisher etc to ig.xml
+        ig.igxml = ig.igxml.format(contact_list=contact_list ,**ig.igpy)  # add title, publisher etc to ig.xml
 
     else:
         ig.igpy['name'] = ig.igpy['title'].replace(' ','')# make name PascalCase assuming no other special character other that spaces
-        ig.igxml = ig.igxml2.format(**ig.igpy)  # add title,name, publisher etc to ig.xml
+        ig.igxml = ig.igxml2.format(contact_list=contact_list,**ig.igpy)  # add title,name, publisher etc to ig.xml
 
 
 

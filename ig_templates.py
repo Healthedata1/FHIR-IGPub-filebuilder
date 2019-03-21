@@ -73,6 +73,7 @@ igpy = {
   "name":"",
   "status": "draft",
   "publisher": "Health eData Inc",
+  "contact": [{}],
   "pub_url": "ehaas@healthedatainc.com",
   "extensions": [],
   "searches": [],
@@ -96,12 +97,14 @@ igpy = {
 igxml ='''<?xml version="1.0" encoding="UTF-8"?>
 <!--Hidden IG for de facto IG publishing-->
 <ImplementationGuide xmlns="http://hl7.org/fhir">
-  <id value="ig"/>
-  <url value="{canonicalBase}/ImplementationGuide/ig"/>
+  <id value="{npm-name}-{fixed-business-version}"/>
+  <url value="{canonicalBase}/ImplementationGuide/{npm-name}-{fixed-business-version}"/>
+  <version value="{fixed-business-version}"/>
   <name value="{title}"/>
   <status value="{status}"/>
   <experimental value="true"/>
   <publisher value="{publisher}"/>
+{contact_list}
   <package>
     <name value="base"/>
 <!-- <resource>   1..* Resource in the implementation guide -->
@@ -192,13 +195,14 @@ igxml ='''<?xml version="1.0" encoding="UTF-8"?>
 igxml2='''<?xml version="1.0" encoding="UTF-8"?>
 <!--Hidden IG for de facto IG publishing-->
 <ImplementationGuide xmlns="http://hl7.org/fhir">
-  <id value="ig"/>
-  <url value="{canonicalBase}/ImplementationGuide/ig"/>
+  <id value="{npm-name}-{fixed-business-version}"/>
+  <url value="{canonicalBase}/ImplementationGuide/{npm-name}-{fixed-business-version}"/>
   <version value="{fixed-business-version}"/>
   <name value="{name}"/>
   <title value="{title}"/>
   <status value="{status}"/>
   <publisher value="{publisher}"/>
+{contact_list}
   <copyright value="Used by permission of {publisher}, all rights reserved Creative Commons License"/>
   <!-- 0..1 Use and/or publishing restrictions -->
  <packageId value="{npm-name}"/> <!-- 0..1 NPM Package name for IG -->
@@ -299,6 +303,13 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
 </ImplementationGuide>
 '''
 
+contact_item = '''
+<contact><!-- 0..* ContactDetail Contact details for the publisher -->
+    <telecom>
+      <system value="{system}"/>
+      <value value="{value}"/>
+    </telecom>
+  </contact>'''
 
 # default content for files
 intro = '''
