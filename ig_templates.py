@@ -100,7 +100,7 @@ igxml ='''<?xml version="1.0" encoding="UTF-8"?>
   <id value="{npm-name}-{fixed-business-version}"/>
   <url value="{canonicalBase}/ImplementationGuide/{npm-name}-{fixed-business-version}"/>
   <version value="{fixed-business-version}"/>
-  <name value="{title}"/>
+  <name value="{name}"/>
   <status value="{status}"/>
   <experimental value="true"/>
   <publisher value="{publisher}"/>
