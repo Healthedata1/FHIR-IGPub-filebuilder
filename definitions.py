@@ -4,6 +4,7 @@
 import json, os, sys, logging, re, csv, ig_templates as ig
 import rR_dict as r
 from lxml import etree
+from pdb import set_trace as bp
 #logging.disable(logging.CRITICAL)
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s- %(message)s')
 logging.info('Start of program')
@@ -13,7 +14,7 @@ logging.info('The logging module is working.')
 logging.info('create the ig.json file template as dictionary')
 
 # globals
-
+igpy = {}
 root_dir = os.getcwd() + '/' # current root_dir
 logging.info('root dir = ' + root_dir)
 
@@ -32,6 +33,7 @@ pages_path = root_dir
 
 def init_igpy():
     # read  non array csv file
+    global igpy
     try:
         defn_csv = '{}definitions.csv'.format(source_dir) # if csv in external directory
     except IndexError:
@@ -39,7 +41,13 @@ def init_igpy():
     logging.info('definitions.csv file is at: {}'.format(defn_csv))
     with open(defn_csv) as defnfile:  # grab a 2 column CSV file and cycle through to update igpy
         reader = csv.reader(defnfile, dialect='excel')
-        next(defnfile)
+        next(defnfile) # header
+        tabs_def = next(reader)
+
+        if tabs_def[0] == 'onlyJson':
+            igpy = ig.igpy2 if tabs_def[1]=="TRUE" else ig.igpy  # choose which template to use based on first row item 'onlyJson'
+        else:
+            raise SystemExit('Need to add "onlyJson,TRUE|FALSE" to first row of definitions.csv!!  (see IG-Template2 for exmmple)')
         for row in reader:  # each row equal row of 2 column csv file as ignoring  header
             logging.info('k,v = {}, {}'.format(row[0],row[1]))  # row[0] = row[0] and row[1] = row[row-key]
             if row[1] == 'FALSE' or row[1] == 'TRUE':  # clean up excel propensity to change the string true/false to TRUE/FALSE
@@ -50,40 +58,40 @@ def init_igpy():
                     row_key1 = row[0].split(".")[1]
                     # deal with lists first : append csv element to dict value
                     for itemz in row[1].split('|'):
-                        ig.igpy[row_key0][row_key1].append(itemz)
+                        igpy[row_key0][row_key1].append(itemz)
                         logging.info('updating ig.json with this: { "' + row_key0 + '" { "' + row_key1 + '": ["' + itemz + '",...] } }')
 
                 except IndexError: # unnested dict elements
                     # deal with lists first : append csv element to dict value
                     for (itemz) in (row[1].split('|')):  # loop over list of dependencies
                         try:  # deal with lists first : append csv element to dict value
-                            ig.igpy[row[0]].append(itemz)
+                            igpy[row[0]].append(itemz)
                             logging.info('updating ig.json with this:  { "' + row[0] + '": [..."' + itemz + '",...] }')
                         except (AttributeError, KeyError):  # simple key value pairs
-                            ig.igpy[row[0]] = itemz  # add/replace csv element to existing dict file
+                            igpy[row[0]] = itemz  # add/replace csv element to existing dict file
                             logging.info('updating ig.json with this:  { "' + row[0] + '": "' + itemz + '" }')
                 except AttributeError: # nested dict elements
                     # todo - deal with nested list elements
-                    ig.igpy[row_key0][row_key1] = row[1] # add/replace csv element to existing dict fil
+                    igpy[row_key0][row_key1] = row[1] # add/replace csv element to existing dict fil
                     logging.info('updating ig.json with this: { "' + row_key0 + '" { "' + row_key1 + '": "' + row[1] + '" } }')
                 except TypeError: # unnested list of objects
                     for (item,itemz) in enumerate(row[1].split('|')):  # loop over list of dependencies
                         try:
-                            ig.igpy[row_key0][item][row_key1]=itemz # create an object for each item in cell
+                            igpy[row_key0][item][row_key1]=itemz # create an object for each item in cell
                         except IndexError:
-                            ig.igpy[row_key0].append({row_key1:itemz}) # create an object for each item in cell
+                            igpy[row_key0].append({row_key1:itemz}) # create an object for each item in cell
                         logging.info('updating ig.json with this: { "' + row_key0 + '"[' + str(item) + ']' +':{ "' + row_key1 + '": "' + itemz + '",... }')
 
     return
 
 def scrub_igpy():  #scrub any rows that are blank.
-    igjson = ig.igpy
+    igpy_copy = igpy
     Empteez = ['',[],None,{},[{}]]
-    for k in list(ig.igpy):
-        if ig.igpy[k] in Empteez:
+    for k in list(igpy):
+        if igpy[k] in Empteez:
             logging.info("element {} is empty!".format(k))
-            del igjson[k]
-    return(igjson)
+            del igpy_copy[k]
+    return(igpy_copy)
 
 
 def make_op_frag(frag_id):  # create [id].md file for new operations
@@ -112,7 +120,7 @@ def update_sd(i, type, logical):
     namespaces = {'o': 'urn:schemas-microsoft-com:office:office',
                   'x': 'urn:schemas-microsoft-com:office:excel',
                   'ss': 'urn:schemas-microsoft-com:office:spreadsheet', }
-    ig.igpy['spreadsheets'].append(i)
+    igpy['spreadsheets'].append(i)
     logging.info('cwd = ' + root_dir)
     logging.info('adding ' + i + ' to spreadsheets array')
     sd_file = open('{}/{}'.format(resources_path,i))  # for each spreadsheet in /resources open value and read  SD id and create and append dict struct to definiions file
@@ -156,7 +164,7 @@ def update_igxml(type, purpose, id):
         kind = 'example'
 
     #################################
-    if ig.igpy['version'] in ['1.0.2','3.0.1']:
+    if igpy['version'] in ['1.0.2','3.0.1']:
         vsxml_1 = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'.format(ev=ev,type=type,id=id)  # concat id into appropriate string for resourceType
         vsxml_2 =   '<page><source value="{type}-{id}.html"/><title value="{type} {title}"/><kind value="{kind}"/></page>'.format(type=type,id=id,title=make_title(id),kind=kind)  # add resource to ig resource  # concat id into appropriate string for page
 
@@ -190,16 +198,16 @@ def update_igxml(type, purpose, id):
 
 def update_igjson(type, id, template = 'base', filename = "blah"): # add base to ig.json - can extend for other templates if needed with extra 'template' param
     if template == 'base':
-        ig.igpy['resources'][type + '/' + id] = {
+        igpy['resources'][type + '/' + id] = {
             template : type + '-' + id + '.html'}  # concat id into appropriate strings and add valuset base def to resources in def file
         logging.info('adding ' + type + ' ' + id + ' base to resources ig.json')
 
     if template == 'source':
-        ig.igpy['resources'][type + '/' + id][template] =  filename  # concat filename + xml into appropriate strings and add source in def file
+        igpy['resources'][type + '/' + id][template] =  filename  # concat filename + xml into appropriate strings and add source in def file
         logging.info('adding ' + id + ' source filename to resources ig.json')
 
     if template == 'defns':
-        ig.igpy['resources'][type + '/' + id][template] = type + '-' + id + '-definitions.html'  # concat id into appropriate strings and add sd defitions to in def file
+        igpy['resources'][type + '/' + id][template] = type + '-' + id + '-definitions.html'  # concat id into appropriate strings and add sd defitions to in def file
         logging.info('adding ' + type + ' ' +  id  + ' definitions to resources ig.json')
     return
 
@@ -219,7 +227,7 @@ def update_def(filename, type, purpose):  # read either json or xml and update t
             vsid = vsmo.group(1)  # get id as string
         '''  think this is trying to add publisher and url to conformance files
         try:
-            vsxml = vsxml.format(id_value = vsid, res_type = type, **ig.igpy)  # add title, publisher etc to ig.xml and url to conformance resources xml file
+            vsxml = vsxml.format(id_value = vsid, res_type = type, **igpy)  # add title, publisher etc to ig.xml and url to conformance resources xml file
             logging.info('updating {} to insert variables for publisher and urls and status = {}'.format(filename, vsxml))
         except KeyError:
             pass
@@ -243,7 +251,7 @@ def update_example(type, id, filename):
     update_igxml(type, 'example', id)  # add example to ig.xml file
     update_igjson(type, id)  # add example base to definitions file
     update_igjson(type, id,'source', filename) # add source filename to definitions file
-    ig.igpy['defaults'][type] = {'template-base': 'ex.html'}  # add example template for type
+    igpy['defaults'][type] = {'template-base': 'ex.html'}  # add example template for type
     logging.info('adding example ' + filename + ' template to type ' +type + ' in ig.json')
     return
 
@@ -255,7 +263,7 @@ def get_file(e):
 
 
 def main():
-
+    global ippy
     global resources_path
     global examples_path
     global pages_path
@@ -271,11 +279,11 @@ def main():
         '''
         global resources_path
 
-        resources_path = os.path.join('../{}/source/resources'.format(sys.argv[1]), ig.igpy['paths']['resources'][0])
+        resources_path = os.path.join('../{}/source/resources'.format(sys.argv[1]), igpy['paths']['resources'][0])
         global examples_path
-        examples_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['resources'][1])
+        examples_path = os.path.join(igpy['igtemplate-dir'], igpy['paths']['resources'][1])
         global pages_path
-        pages_path = os.path.join(ig.igpy['igtemplate-dir'], ig.igpy['paths']['pages'][1], '_includes')
+        pages_path = os.path.join(igpy['igtemplate-dir'], igpy['paths']['pages'][1], '_includes')
         '''
 
     except IndexError:
@@ -291,19 +299,19 @@ def main():
     #################################
     try:   # allow for multiple contacts
         contact_list = ""
-        for i in ig.igpy['contact']:
+        for i in igpy['contact']:
             contact_list = '{}\n{}'.format(contact_list,ig.contact_item.format(**i))
 
     except KeyError:
-        contact_list = ig.contact_item.format(**ig.igpy)
+        contact_list = ig.contact_item.format(**igpy)
     logging.info('contact list = ' + contact_list)
 
-    if ig.igpy['version'] in ['1.0.2','3.0.1']:
-        ig.igxml = ig.igxml.format(contact_list=contact_list ,**ig.igpy)  # add title, publisher etc to ig.xml
+    if igpy['version'] in ['1.0.2','3.0.1']:
+        ig.igxml = ig.igxml.format(contact_list=contact_list ,**igpy)  # add title, publisher etc to ig.xml
 
     else:
-        ig.igpy['name'] = ig.igpy['title'].replace(' ','')# make name PascalCase assuming no other special character other that spaces
-        ig.igxml = ig.igxml2.format(contact_list=contact_list,**ig.igpy)  # add title,name, publisher etc to ig.xml
+        igpy['name'] = igpy['title'].replace(' ','')# make name PascalCase assuming no other special character other that spaces
+        ig.igxml = ig.igxml2.format(contact_list=contact_list,**igpy)  # add title,name, publisher etc to ig.xml
 
 
 
@@ -338,7 +346,7 @@ def main():
             update_def(resources[i], 'SearchParameter', 'conformance')
 
    # add spreadsheet extensions
-    for extension in ig.igpy['extensions']:
+    for extension in igpy['extensions']:
         update_igjson('StructureDefinition', extension, 'base')
         update_igjson('StructureDefinition', extension, 'defns')
         update_igxml('StructureDefinition','conformance' , extension) # add to ig.xml as an SD
@@ -346,17 +354,17 @@ def main():
         logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, extension))
         make_frags(extension)
     # add spreadsheet search parameters
-    for search in ig.igpy['searches']:
+    for search in igpy['searches']:
        update_igjson('SearchParameter', search, 'base')
     # add spreadsheet code systems
-    for codesystem in ig.igpy['codesystems']:
+    for codesystem in igpy['codesystems']:
        update_igjson('CodeSystem', codesystem, 'base')
        update_igjson('ValueSet', codesystem, 'base')
     # add spreadsheet valuesets
-    for valueset in ig.igpy['valuesets']:
+    for valueset in igpy['valuesets']:
        update_igjson('ValueSet', valueset, 'base')
     # add spreadsheet structuremaps
-    for structuremap in ig.igpy['structuremaps']:
+    for structuremap in igpy['structuremaps']:
        update_igjson('StructureMap', structuremap, 'base')
 
     examples = os.listdir(examples_path)  # get all the examples in the examples directory assuming are in json or xml
@@ -412,23 +420,23 @@ if __name__ == '__main__':
     # replace ig.xml with this file - write files and copy to source directory
     write_igxml(resources_path,ig.igxml)
     # scrub empty fields out of ig.exjson
-    ig.igpy = scrub_igpy()
-    logging.info('ig.json now looks like : ' + json.dumps(ig.igpy))
+    igpy = scrub_igpy()
+    logging.info('ig.json now looks like : ' + json.dumps(igpy))
     try:
-        write_igjson(source_dir,ig.igpy)  # copy to source directory
+        write_igjson(source_dir,igpy)  # copy to source directory
     except IndexError:
         pass
 
     # update sd.html in root_dir if needed
 
-    edit_frontmatter(root_dir, ig.igpy)
+    edit_frontmatter(root_dir, igpy)
 
 
     # update ig.json in root
-    ig.igpy['paths']['resources'][0] = '{}source/resources'.format(source_dir) # needs to be 1 element
-    ig.igpy['paths']['resources'][1] = '{}source/examples'.format(source_dir) # needs to be 2 element, 1st is resource files
-    ig.igpy['paths']['pages'][1] = '{}source/pages'.format(source_dir)# needs to be 2 element, 1st is static framework files
+    igpy['paths']['resources'][0] = '{}source/resources'.format(source_dir) # needs to be 1 element
+    igpy['paths']['resources'][1] = '{}source/examples'.format(source_dir) # needs to be 2 element, 1st is resource files
+    igpy['paths']['pages'][1] = '{}source/pages'.format(source_dir)# needs to be 2 element, 1st is static framework files
 
-    write_igjson(root_dir,ig.igpy)
+    write_igjson(root_dir,igpy)
 
     logging.info('End of program')

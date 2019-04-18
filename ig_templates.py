@@ -59,13 +59,108 @@ igpy = {
       "resources": [],
       "specification": "http://build.fhir.org",
       "temp": "temp",
-      "txCache": "txCache"
+      "txCache": "txCache",
+      "history": "history"
   },
   "resources": {},
   "sct-edition": "http://snomed.info/sct/731000124108",
   "source": "ig.xml",
   "special-urls": [],
   "spreadsheets": [],
+  "bundles": [],
+  "tool": "jekyll",
+  "version": "",
+  "igtemplate-dir": None,
+  "title": "Implementation Guide Template",
+  "name":"",
+  "status": "draft",
+  "publisher": "Health eData Inc",
+  "contact": [{}],
+  "pub_url": "ehaas@healthedatainc.com",
+  "extensions": [],
+  "searches": [],
+  "codesystems": [],
+  "valuesets": [],
+  "structuremaps": [],
+  "working-dir": None,
+  "logging":[],
+  "topofpage": "true",
+  "allviews": "true",
+  "mappings": "true",
+  "swagger" : [{
+  "mode" : "single",
+  "capabilities" : "server",
+ }]
+}
+
+igpy2 = {
+  "npm-name": "healthedatainc.igtemplate",
+  "broken-links": None,
+  "canonicalBase": "http://www.fhir.org/guides/test",
+  "defaults": {
+      "Any": {
+          "template-base": "base.html",
+          "template-format": "format.html",
+          "swagger" : "true",
+          "xml": False,
+          "ttl": False
+      },
+      "CapabilityStatement": {
+          "template-base": "base.html"
+      },
+      "CodeSystem": {
+          "template-base": "base.html"
+      },
+      "ConceptMap": {
+          "template-base": "base.html"
+      },
+      "OperationDefinition": {
+          "template-base": "base.html"
+      },
+      "SearchParameter": {
+        "template-base": "base.html"
+      },
+      "StructureDefinition": {
+          "template-base": "sd.html",
+          "template-defns": "sd-definitions.html",
+          "template-mappings": "sd-mappings.html"
+      },
+      "StructureMap": {
+          "template-base": "ex.html",
+          "content": False,
+          "script": False,
+          "profiles": False
+      },
+      "ValueSet": {
+          "template-base": "base.html"
+      }
+  },
+  "dependencyList": [{}],
+  "do-transforms": "false",
+  "extraTemplates": [
+      "mappings"
+  ],
+  "fixed-business-version": "0.0.0",
+  "gen-examples": "false",
+  "jurisdiction": "",
+  "license": "CC0-1.0",
+  "no-inactive-codes": "false",
+  "paths": {
+      "output": "output",
+      "pages": [],
+      "qa": "qa",
+      "resources": [],
+      "specification": "http://build.fhir.org",
+      "temp": "temp",
+      "txCache": "txCache",
+      "history": "history"
+  },
+  "resources": {},
+  "sct-edition": "http://snomed.info/sct/731000124108",
+  "source": "ig.xml",
+  "special-urls": [],
+  "spreadsheets": [],
+  "bundles": [],
   "tool": "jekyll",
   "version": "",
   "igtemplate-dir": None,
