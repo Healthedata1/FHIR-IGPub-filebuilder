@@ -86,7 +86,6 @@ igpy = {
   "logging":[],
   "topofpage": "true",
   "allviews": "true",
-  "mappings": "true",
   "swagger" : [{
   "mode" : "single",
   "capabilities" : "server",
@@ -179,7 +178,6 @@ igpy2 = {
   "logging":[],
   "topofpage": "true",
   "allviews": "true",
-  "mappings": "true",
   "swagger" : [{
   "mode" : "single",
   "capabilities" : "server",
