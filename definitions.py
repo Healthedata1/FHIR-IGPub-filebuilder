@@ -1,4 +1,4 @@
-#! /usr/bin/env python3.5
+#! /usr/bin/env python3.7
 
 # create ig definition file with all value sets in the /resources directory
 import json, os, sys, logging, re, csv, ig_templates as ig
@@ -97,10 +97,10 @@ def scrub_igpy():  #scrub any rows that are blank.
 def make_op_frag(frag_id):  # create [id].md file for new operations
 
     # check if files already exist before writing files
-    frag = '{}/_includes/{}'.format(pages_path, frag_id)
-    fragf = open(frag + '.md', 'w')
-    fragf.write('source: {}.md file\n{}'.format(frag_id, ig.op_frag))
-    logging.info('added file: ' + frag + '.md')
+    frag = '{}/_includes/{}-example.md'.format(pages_path, frag_id)
+    fragf = open('{frag}'.format(frag=frag), 'w')
+    fragf.write('source: _includes/{frag_id}-example.md file\n{frag_text}'.format(frag_id=frag_id, frag_text=ig.op_frag))
+    logging.info('added opdef fragment file: {frag}'.format(frag=frag))
     fragf.close()
     return
 
@@ -241,7 +241,7 @@ def update_def(filename, type, purpose):  # read either json or xml and update t
       make_frags(vsid)
     if type == 'OperationDefinition':
       logging.info('looking for file = {}/_includes/{}-intro.md'.format(pages_path, vsid))
-      if not os.path.exists('{}/_includes/{}.md'.format(pages_path, vsid)):  # if file is missing then create new page fragments for extension
+      if not os.path.exists('{}/_includes/{}-example.md'.format(pages_path, vsid)):  # if file is missing then create new page fragments for extension
         make_op_frag(vsid)
     update_igxml(type, purpose, vsid)
     return
