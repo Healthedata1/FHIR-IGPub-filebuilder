@@ -396,8 +396,10 @@ def write_igxml(path, igxml):
     return
 
 
-# edit front matter for sd.html
+# edit front matter for sd.html - bypass this since not needed
 def edit_frontmatter(path, igpy):
+    pass
+    '''
     logging.info('mappings = {}'.format(igpy['mappings']))
     with open('{}/sd.html'.format(path), 'r') as f:
         newline = []  # create new copy
@@ -408,6 +410,7 @@ def edit_frontmatter(path, igpy):
             logging.info('appended this line to copy {}'.format(line))
     with open('{}/sd.html'.format(path), 'w') as f:
         f.writelines(newline)  # replace sd.html with new copy
+    '''
     return
 
 #  main
