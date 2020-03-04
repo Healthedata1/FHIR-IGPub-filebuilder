@@ -164,7 +164,7 @@ def update_igxml(type, purpose, id):
         kind = 'example'
 
     #################################
-    if igpy['version'] in ['1.0.2','3.0.1']:
+    if igpy['version'] in ['1.0.2','3.0.2']:
         vsxml_1 = '<resource><example value="{ev}"/><sourceReference><reference value="{type}/{id}"/></sourceReference></resource>'.format(ev=ev,type=type,id=id)  # concat id into appropriate string for resourceType
         vsxml_2 =   '<page><source value="{type}-{id}.html"/><title value="{type} {title}"/><kind value="{kind}"/></page>'.format(type=type,id=id,title=make_title(id),kind=kind)  # add resource to ig resource  # concat id into appropriate string for page
 
@@ -306,13 +306,21 @@ def main():
         contact_list = ig.contact_item.format(**igpy)
     logging.info('contact list = ' + contact_list)
 
-    if igpy['version'] in ['1.0.2','3.0.1']:
+    if igpy['version'] in ['1.0.2','3.0.2']:
         ig.igxml = ig.igxml.format(contact_list=contact_list ,**igpy)  # add title, publisher etc to ig.xml
 
     else:
         igpy['name'] = igpy['title'].replace(' ','')# make name PascalCase assuming no other special character other that spaces
         ig.igxml = ig.igxml2.format(contact_list=contact_list,**igpy)  # add title,name, publisher etc to ig.xml
+        for dependency in igpy['dependencyList']:
+            logging.info('dependency list = ' + json.dumps(dependency))
+            try:
+                dependsOn = ig.dependsOn.format(**dependency)
+                logging.info('dependency xml = ' + dependsOn)
 
+                ig.igxml = ig.igxml.replace('<!-- insert dependency -->','<!-- insert dependency -->{dependsOn}'.format(dependsOn=dependsOn))  # add dependencies to ig.xml
+            except KeyError:
+                logging.info('no dependencies')
 
 
     ################################
@@ -325,24 +333,31 @@ def main():
             else:
                 logical = False
             update_sd(resources[i], 'StructureDefinition', logical) # append to the igpy[spreadsheet] array.
-        if ('valueset' in resources[i]) or ('ValueSet' in resources[i]): # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
+        elif ('valueset' in resources[i]) or ('ValueSet' in resources[i]): # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
             update_def(resources[i], 'ValueSet', 'terminology')
-        if ('codesystem' in resources[i]) or ('CodeSystem' in resources[i]): # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
+        elif ('codesystem' in resources[i]) or ('CodeSystem' in resources[i]): # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
             update_def(resources[i], 'CodeSystem', 'terminology')
-        if ('conceptmap' in resources[i]) or ('ConceptMap' in resources[i]):  # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
+        elif ('conceptmap' in resources[i]) or ('ConceptMap' in resources[i]):  # for each vs in /resources open valueset resources and read id and create and append dict struct to definiions file
             update_def(resources[i], 'ConceptMap', 'terminology')
-        if ('capabilitystatement' in resources[
+        elif ('capabilitystatement' in resources[
             i]) or  ('CapabilityStatement' in resources[
                 i]): # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'CapabilityStatement', 'conformance')
-        if ('operationdefinition' in resources[i]) or ('OperationDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
+        elif ('operationdefinition' in resources[i]) or ('OperationDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'OperationDefinition', 'conformance')
-        if ('structuredefinition' in resources[i]) or ('StructureDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definitions file
+
+        elif ('messagedefinition' in resources[i]) or ('MessageDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
+            update_def(resources[i], 'MessageDefinition', 'conformance')
+
+        elif ('graphdefinition' in resources[i]) or ('GraphDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
+            update_def(resources[i], 'GraphDefinition', 'conformance')
+
+        elif ('structuredefinition' in resources[i]) or ('StructureDefinition' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definitions file
             update_def(resources[i], 'StructureDefinition', 'conformance')
-        if ('structuremap' in resources[i]) or ('SructureMap' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
+        elif ('structuremap' in resources[i]) or ('SructureMap' in resources[i]):  # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'StructureMap', 'conformance')
 
-        if ('searchparameter' in resources[i]) or ('SearchParameter' in resources[i]): # for each cs in /resources open, read id and create and append dict struct to definiions file
+        elif ('searchparameter' in resources[i]) or ('SearchParameter' in resources[i]): # for each cs in /resources open, read id and create and append dict struct to definiions file
             update_def(resources[i], 'SearchParameter', 'conformance')
 
    # add spreadsheet extensions

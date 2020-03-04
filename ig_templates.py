@@ -190,10 +190,10 @@ igpy2 = {
 igxml ='''<?xml version="1.0" encoding="UTF-8"?>
 <!--Hidden IG for de facto IG publishing-->
 <ImplementationGuide xmlns="http://hl7.org/fhir">
-  <id value="{npm-name}-{fixed-business-version}"/>
-  <url value="{canonicalBase}/ImplementationGuide/{npm-name}-{fixed-business-version}"/>
+  <id value="{npm-name}"/>
+  <url value="{canonicalBase}/ImplementationGuide/{npm-name}"/>
   <version value="{fixed-business-version}"/>
-  <name value="{name}"/>
+  <name value="{title}"/>
   <status value="{status}"/>
   <experimental value="true"/>
   <publisher value="{publisher}"/>
@@ -301,6 +301,16 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
  <packageId value="{npm-name}"/> <!-- 0..1 NPM Package name for IG -->
 <license value="CC0-1.0"/> <!--*****HARDCODED********* 0..1 SPDX license code for this IG (or not-open-source) -->
 <fhirVersion value="{version}"/> <!-- 0..1 FHIR Version this Implementation Guide targets -->
+ <!-- <dependsOn>   0..* Another Implementation guide this depends on
+  <uri> 1..1 canonical(ImplementationGuide) Identity of the IG that this depends on </uri>
+  <packageId value="[id]"/> 0..1 NPM Package name for IG this depends on
+  <version value="[string]"/> 0..1 Version of the IG
+ </dependsOn> -->
+ <!-- insert dependency -->
+ <!-- <global>  0..* Profiles that apply globally
+  <type value="[code]"/> 1..1 Type this profile applies to
+  <profile> 1..1 canonical(StructureDefinition) Profile that all resources must conform to</profile>
+ </global> -->
  <definition>
   <!--  <grouping>  0..* Grouping used to present related resources in the IG -->
   <!-- <name value="[string]"/> 1..1 Descriptive name for the package -->
@@ -338,6 +348,20 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
     <!-- ============ End Extensions and examples =============== -->
 
       </page>
+
+     <!-- ============ Bundle Definitions Page =============== -->
+     <page><nameUrl value="bundles.html"/><title value="Bundle Definitions"/><generation value="markdown"/>
+
+     <!-- ============ MessagedDefinitions  =============== -->
+     <!-- insert messagedefinitions -->
+     <!-- ============ End MessagedDefinitions  =============== -->
+
+      <!-- ============ GraphDefinitions  =============== -->
+      <!-- insert graphdefinitions -->
+      <!-- ============ EndGraphDefinitions  =============== -->
+
+     </page>
+
     <!-- ============ Operations Page =============== -->
     <page><nameUrl value="operations.html"/><title value="Operations"/><generation value="markdown"/>
 
@@ -382,11 +406,11 @@ igxml2='''<?xml version="1.0" encoding="UTF-8"?>
     <!-- ============ Security Page =============== -->
     <page><nameUrl value="security.html"/><title value="Security"/><generation value="markdown"/></page>
 
-    <!-- ============ Downloads Page =============== -->
-    <page><nameUrl value="downloads.html"/><title value="Downloads"/><generation value="markdown"/></page>
-
     <!-- ============ Examples Page=============== -->
     <page><nameUrl value="all-examples.html"/><title value="All Examples"/><generation value="markdown"/></page>
+
+    <!-- ============ Downloads Page =============== -->
+    <page><nameUrl value="downloads.html"/><title value="Downloads"/><generation value="markdown"/></page>
 
     <!-- ============ Table of Contents =============== -->
     <page><nameUrl value="toc.html"/><title value="Table of Contents"/><generation value="html"/></page>
@@ -405,7 +429,8 @@ contact_item = '''
   </contact>'''
 
 # default content for files
-intro = '''
+#style 1
+xintro = ''' # change var name to 'intro' to use
 {% assign id = {{page.id}} %}
 source file: source/pages/\_includes/{{id}}-intro.md
 
@@ -431,6 +456,34 @@ The following data-elements are mandatory (i.e data MUST be present). blah blah 
 
 - list examples here
 '''
+#style2
+intro = '''
+{% assign base_id = {{page.id}} %}
+{% assign base_type = {{site.data.structuredefinitions.[base_id].type}} %}
+
+{{site.data.structuredefinitions.[base_id].description}}
+
+### Mandatory and Must Support Data Elements
+
+The following data-elements are mandatory (i.e data MUST be present) or must be supported if the data is present in the sending system ([Must Support] definition). They are presented below in a simple human-readable explanation.  Profile specific guidance and examples are provided as well.  The [Formal Profile Definition] below provides the  formal summary, definitions, and  terminology requirements.
+
+**Each {{{base_type}} must have:**
+
+1. blah1
+1. blah2
+
+**Each {{base_type}} must support:**
+
+1. blah1
+1. blah2
+
+### Examples
+
+- [{{base_type}} Example]({{base_type}}-{{base_id}}-01.html
+
+{% include link-list.md %}
+'''
+
 search = '''
 {% assign id = {{page.id}} %}
 source file: source/pages/\_includes/{{id}}-search.md
@@ -490,3 +543,11 @@ profile_examples = '''
     <!-- examples -->
     {profile-examples}
 </page>'''
+
+# Another Implementation guide ig.xml depends on
+dependsOn ='''
+<dependsOn id="{name}">  <!-- 0..* Another Implementation guide this depends on -->
+  <uri value="{location}"><!-- 1..1 canonical(ImplementationGuide) Identity of the IG that this depends on --></uri>
+  <packageId value="{package}"/><!-- 0..1 NPM Package name for IG this depends on -->
+  <version value="{version}"/><!-- 0..1 Version of the IG -->
+ </dependsOn>'''
